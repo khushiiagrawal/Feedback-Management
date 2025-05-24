@@ -1,85 +1,109 @@
-import Link from 'next/link'
-import { AcademicCapIcon, ChartBarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/auth';
+import Link from 'next/link';
+import { AcademicCapIcon, ChartBarIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 
-export default function Home() {
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
+
+  if (session?.user?.role === 'STUDENT') {
+    redirect('/student');
+  } else if (session?.user?.role === 'FACULTY') {
+    redirect('/faculty');
+  } else if (session?.user?.role === 'HOD') {
+    redirect('/hod');
+  }
+
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900">
-      {/* Hero section */}
-      <div className="relative isolate overflow-hidden">
-        <div className="mx-auto max-w-7xl pb-24 pt-10 sm:pb-32 lg:grid lg:grid-cols-2 lg:gap-x-8 lg:px-8 lg:py-40">
-          <div className="px-6 lg:px-0 lg:pt-4">
-            <div className="mx-auto max-w-2xl">
-              <div className="max-w-lg">
-                <h1 className="mt-10 text-4xl font-bold tracking-tight text-cyan-400 sm:text-6xl">
-                  Student Feedback Management System
-                </h1>
-                <p className="mt-6 text-lg leading-8 text-blue-300">
-                  A modern platform for students to provide valuable feedback to faculty members,
-                  helping improve the quality of education and teaching methods.
-                </p>
-                <div className="mt-10 flex items-center gap-x-6">
-                  <Link
-                    href="/feedback"
-                    className="rounded-lg bg-gradient-to-r from-cyan-500 to-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:from-cyan-600 hover:to-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-500 transition-all duration-200 transform hover:scale-105"
-                  >
-                    Submit Feedback
-                  </Link>
-                  <Link
-                    href="/admin"
-                    className="text-sm font-semibold leading-6 text-blue-300 hover:text-cyan-400 transition-colors duration-200"
-                  >
-                    Admin Dashboard <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </div>
+    <div className="min-h-screen bg-black text-blue-100">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-500 drop-shadow mb-4">
+            Faculty Feedback System
+          </h1>
+          <p className="mt-4 text-xl text-blue-200 max-w-3xl mx-auto">
+            A comprehensive platform for students to provide feedback on faculty performance, helping improve teaching quality and student experience.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-20">
+          {/* Student Card */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-black/80 border border-blue-700 rounded-lg p-6 shadow-xl">
+              <AcademicCapIcon className="h-12 w-12 text-blue-400 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold text-blue-100 mb-2 text-center">Students</h3>
+              <p className="text-blue-300 mb-4 text-center">
+                Provide feedback on faculty performance and help improve teaching quality.
+              </p>
+              <Link
+                href="/login"
+                className="block w-full text-center px-4 py-2 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold shadow hover:from-blue-500 hover:to-cyan-400 transition-colors duration-200"
+              >
+                Student Login
+              </Link>
+            </div>
+          </div>
+          {/* Faculty Card */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-black/80 border border-purple-700 rounded-lg p-6 shadow-xl">
+              <ChartBarIcon className="h-12 w-12 text-purple-400 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold text-blue-100 mb-2 text-center">Faculty</h3>
+              <p className="text-blue-300 mb-4 text-center">
+                View feedback and analytics to improve teaching methods and student engagement.
+              </p>
+              <Link
+                href="/login"
+                className="block w-full text-center px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-500 text-white font-semibold shadow hover:from-purple-500 hover:to-pink-400 transition-colors duration-200"
+              >
+                Faculty Login
+              </Link>
+            </div>
+          </div>
+          {/* HOD Card */}
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg blur opacity-25 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
+            <div className="relative bg-black/80 border border-emerald-700 rounded-lg p-6 shadow-xl">
+              <UserGroupIcon className="h-12 w-12 text-emerald-400 mb-4 mx-auto" />
+              <h3 className="text-xl font-bold text-blue-100 mb-2 text-center">HOD</h3>
+              <p className="text-blue-300 mb-4 text-center">
+                Monitor department performance and make data-driven decisions.
+              </p>
+              <Link
+                href="/login"
+                className="block w-full text-center px-4 py-2 rounded-lg bg-gradient-to-r from-emerald-600 to-green-500 text-white font-semibold shadow hover:from-emerald-500 hover:to-green-400 transition-colors duration-200"
+              >
+                HOD Login
+              </Link>
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Feature section */}
-      <div className="mx-auto max-w-7xl px-6 lg:px-8 py-24 sm:py-32">
-        <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-cyan-400">Better Education</h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-cyan-400 sm:text-4xl">
-            Everything you need to improve teaching quality
-          </p>
-          <p className="mt-6 text-lg leading-8 text-blue-300">
-            Our platform provides a comprehensive solution for collecting, analyzing, and acting upon student feedback.
+        {/* About Us Section */}
+        <div className="bg-black/80 border border-blue-800 rounded-2xl shadow-2xl p-10 mb-12">
+          <h2 className="text-3xl font-extrabold text-blue-200 mb-4 text-center">About Us</h2>
+          <p className="text-blue-300 text-lg text-center max-w-3xl mx-auto">
+            We are a passionate team of educators and technologists dedicated to improving the quality of education through actionable feedback. Our platform bridges the gap between students and faculty, fostering a culture of continuous improvement and collaboration.
           </p>
         </div>
-        <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-none">
-          <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
-            <div className="flex flex-col bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-cyan-500/20">
-              <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-cyan-400">
-                <AcademicCapIcon className="h-5 w-5 flex-none text-cyan-400" aria-hidden="true" />
-                Faculty Evaluation
-              </dt>
-              <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-blue-300">
-                <p className="flex-auto">Comprehensive feedback system for evaluating faculty performance and teaching methods.</p>
-              </dd>
-            </div>
-            <div className="flex flex-col bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-cyan-500/20">
-              <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-cyan-400">
-                <ChartBarIcon className="h-5 w-5 flex-none text-cyan-400" aria-hidden="true" />
-                Analytics Dashboard
-              </dt>
-              <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-blue-300">
-                <p className="flex-auto">Detailed analytics and insights to help improve teaching quality and student satisfaction.</p>
-              </dd>
-            </div>
-            <div className="flex flex-col bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl shadow-lg border border-cyan-500/20">
-              <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-cyan-400">
-                <UserGroupIcon className="h-5 w-5 flex-none text-cyan-400" aria-hidden="true" />
-                Student Engagement
-              </dt>
-              <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-blue-300">
-                <p className="flex-auto">Easy-to-use interface for students to provide meaningful feedback and suggestions.</p>
-              </dd>
-            </div>
-          </dl>
+        {/* Our Mission Section */}
+        <div className="bg-black/80 border border-blue-800 rounded-2xl shadow-2xl p-10 mb-12">
+          <h2 className="text-3xl font-extrabold text-blue-200 mb-4 text-center">Our Mission</h2>
+          <p className="text-blue-300 text-lg text-center max-w-3xl mx-auto">
+            Our mission is to empower students to share their voices and help faculty grow through constructive feedback. We believe in transparency, accountability, and the power of data-driven insights to transform the educational experience for everyone.
+          </p>
+        </div>
+        {/* More Section */}
+        <div className="bg-black/80 border border-blue-800 rounded-2xl shadow-2xl p-10">
+          <h2 className="text-3xl font-extrabold text-blue-200 mb-4 text-center">More</h2>
+          <ul className="text-blue-300 text-lg text-center max-w-3xl mx-auto space-y-2">
+            <li>✔️ Anonymous and secure feedback</li>
+            <li>✔️ Real-time analytics for faculty and HODs</li>
+            <li>✔️ Easy-to-use interface for all users</li>
+            <li>✔️ Continuous updates and improvements</li>
+          </ul>
         </div>
       </div>
     </div>
-  )
+  );
 }

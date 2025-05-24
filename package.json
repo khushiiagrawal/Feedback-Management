@@ -1,5 +1,5 @@
 {
-  "name": "dbms-project-",
+  "name": "faculty-feedback-system",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,32 +7,40 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "cleanup": "ts-node scripts/cleanup.ts",
-    "prisma:seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+    "prisma:seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options '{\"module\":\"CommonJS\"}' prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^1.0.12",
     "@headlessui/react": "^1.7.18",
-    "@heroicons/react": "^2.2.0",
+    "@heroicons/react": "^2.1.1",
+    "@huggingface/inference": "^3.13.0",
     "@prisma/client": "^5.10.2",
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.1",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "next": "14.1.0",
+    "next-auth": "^4.24.6",
     "react": "^18",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",
-    "react-hot-toast": "^2.5.2"
+    "react-hot-toast": "^2.4.1"
   },
   "devDependencies": {
-    "@types/node": "^20.17.44",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
-    "postcss": "^8.5.3",
+    "postcss": "^8",
     "prisma": "^5.10.2",
-    "tailwindcss": "^3.4.17",
+    "tailwindcss": "^3.3.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5"
   }
 }

@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react'
 import { StarIcon } from '@heroicons/react/20/solid'
 import { ChartBarIcon, UserGroupIcon, AcademicCapIcon } from '@heroicons/react/24/outline'
+import SentimentAnalysis from '@/components/SentimentAnalysis'
+import FeedbackTrends from '@/components/FeedbackTrends'
+import GenerateReportButton from '@/components/GenerateReportButton'
 
 interface Feedback {
   id: number
@@ -28,6 +31,7 @@ export default function AdminDashboard() {
     averageRating: 0,
     totalFaculty: 0
   })
+  const [selectedTeacher, setSelectedTeacher] = useState<{ id: number; name: string } | null>(null)
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -49,6 +53,14 @@ export default function AdminDashboard() {
           averageRating: parseFloat(averageRating.toFixed(1)),
           totalFaculty: uniqueFaculty
         })
+
+        // Set the first teacher as selected by default
+        if (data.length > 0) {
+          setSelectedTeacher({
+            id: data[0].faculty.id,
+            name: data[0].faculty.name
+          })
+        }
       } catch (error) {
         console.error('Error fetching feedbacks:', error)
       } finally {
@@ -129,6 +141,65 @@ export default function AdminDashboard() {
             </div>
           </div>
         </div>
+
+        {/* Teacher Selection */}
+        <div className="mb-8">
+          <label htmlFor="teacher" className="block text-sm font-medium text-blue-300 mb-2">
+            Select Teacher
+          </label>
+          <select
+            id="teacher"
+            className="block w-full max-w-xs rounded-md bg-gray-800 border-cyan-500/20 text-cyan-400 focus:ring-cyan-500 focus:border-cyan-500"
+            value={selectedTeacher?.id || ''}
+            onChange={(e) => {
+              const teacher = feedbacks.find(f => f.faculty.id === Number(e.target.value))
+              if (teacher) {
+                setSelectedTeacher({
+                  id: teacher.faculty.id,
+                  name: teacher.faculty.name
+                })
+              }
+            }}
+          >
+            {Array.from(new Set(feedbacks.map(f => f.faculty.id))).map(id => {
+              const teacher = feedbacks.find(f => f.faculty.id === id)?.faculty
+              return (
+                <option key={id} value={id}>
+                  {teacher?.name} - {teacher?.subject}
+                </option>
+              )
+            })}
+          </select>
+        </div>
+
+        {/* Analytics Section */}
+        {selectedTeacher && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-cyan-500/20 p-6">
+              <h3 className="text-lg font-medium text-cyan-400 mb-4">Sentiment Analysis</h3>
+              <SentimentAnalysis
+                feedback={feedbacks
+                  .filter(f => f.faculty.id === selectedTeacher.id)
+                  .map(f => f.comments)
+                  .join(' ')}
+              />
+            </div>
+            <div className="bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-cyan-500/20 p-6">
+              <h3 className="text-lg font-medium text-cyan-400 mb-4">Feedback Trends</h3>
+              <FeedbackTrends teacherId={String(selectedTeacher.id)} />
+            </div>
+          </div>
+        )}
+
+        {/* Generate Report Button */}
+        {selectedTeacher && (
+          <div className="flex justify-end mb-8">
+            <GenerateReportButton
+              teacherId={String(selectedTeacher.id)}
+              teacherName={selectedTeacher.name}
+            />
+          </div>
+        )}
 
         {/* Feedback Table */}
         <div className="bg-gray-800/50 backdrop-blur-sm shadow-xl rounded-2xl overflow-hidden border border-cyan-500/20">

@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,32 +7,96 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  STUDENT
+  FACULTY
+  HOD
+}
+
+enum Rating {
+  POOR
+  FAIR
+  GOOD
+  VERY_GOOD
+  EXCELLENT
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  student   Student?
+  faculty   Faculty?
+  hod       HOD?
+}
+
 model Student {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
-  email     String    @unique
+  email     String     @unique
+  usn       String     @unique
+  userId    Int        @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  user      User       @relation(fields: [userId], references: [id])
   feedbacks Feedback[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
 }
 
 model Faculty {
-  id        Int       @id @default(autoincrement())
-  name      String
-  subject   String
-  feedbacks Feedback[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         Int        @id @default(autoincrement())
+  name       String
+  email      String     @unique
+  department String
+  userId     Int        @unique
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  user       User       @relation(fields: [userId], references: [id])
+  feedbacks  Feedback[]
+}
+
+model HOD {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  department String
+  userId     Int      @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model Feedback {
+  id              Int       @id @default(autoincrement())
+  studentId       Int
+  facultyId       Int
+  teachingQuality Rating
+  subjectKnowledge Rating
+  communication   Rating
+  punctuality     Rating
+  interaction     Rating
+  clarity         Rating
+  methodology     Rating
+  overallRating   Rating
+  comments        String    @db.Text
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  faculty         Faculty   @relation(fields: [facultyId], references: [id])
+  student         Student   @relation(fields: [studentId], references: [id])
+  sentiment       Sentiment?
+
+  @@index([facultyId])
+  @@index([studentId])
+}
+
+model Sentiment {
   id         Int      @id @default(autoincrement())
-  student    Student  @relation(fields: [studentId], references: [id])
-  studentId  Int
-  faculty    Faculty  @relation(fields: [facultyId], references: [id])
-  facultyId  Int
-  rating     Int      @db.TinyInt
-  comments   String   @db.Text
+  feedbackId Int      @unique
+  score      Float
+  label      String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
 }

@@ -1,35 +1,29 @@
-import type { Metadata } from 'next'
-import './globals.css'
-import { Inter } from 'next/font/google'
-import { Toaster } from 'react-hot-toast'
-import Navbar from '@/components/Navbar'
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { NextAuthProvider } from '@/providers/NextAuthProvider';
+import Navbar from '@/components/Navbar';
 
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  preload: true,
-  fallback: ['system-ui', 'arial']
-})
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Student Feedback System',
-  description: 'A modern platform for student feedback management',
-}
+  title: 'Faculty Feedback System',
+  description: 'A comprehensive platform for managing and analyzing faculty feedback',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={inter.className}>
-      <body>
-        <Navbar />
-        <main className=" mx-auto ">
-          {children}
-        </main>
-        <Toaster position="top-right" />
+    <html lang="en">
+      <body className={inter.className}>
+        <NextAuthProvider>
+          <Navbar />
+          <main>{children}</main>
+        </NextAuthProvider>
       </body>
     </html>
-  )
+  );
 }
